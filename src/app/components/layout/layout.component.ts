@@ -28,4 +28,7 @@ export class LayoutComponent implements OnInit {
   ngOnInit() {
   }
 
+  save() {
+    console.log(this.layout);
+  }
 }
