@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { UUID } from 'angular2-uuid';
+import { LocalStorage, WebstorableArray } from 'ngx-store';
+import { DraggableComponent, DraggableComponentCollector, DroppableComponent } from './draggable-component';
 
-export interface IComponent {
-  id: string;
-  componentRef: string;
+export class GridEntity {
+  layout: GridsterItem; componentRef: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class LayoutService {
+
+  @LocalStorage() storedGrid: WebstorableArray<GridEntity>;
 
   public options: GridsterConfig = {
     draggable: {
@@ -23,11 +26,15 @@ export class LayoutService {
   };
 
   public layout: GridsterItem[] = [];
-  public components: IComponent[] = [];
+  private components: DroppableComponent[] = [];
 
   dropId: string;
 
-  constructor() { }
+  constructor(
+    private componentCollector: DraggableComponentCollector
+  ) {
+
+  }
 
   addItem(): void {
     this.layout.push({
@@ -51,19 +58,21 @@ export class LayoutService {
   }
 
   dropItem(dragId: string): void {
-    const { components } = this;
-    const comp: IComponent = components.find(c => c.id === this.dropId);
-    const updateIdx: number = comp ? components.indexOf(comp) : components.length;
-    const componentItem: IComponent = {
-      id: this.dropId,
-      componentRef: dragId
-    };
-    this.components = Object.assign([], this.components, { [updateIdx]: componentItem });
+
+    const comp = this.componentCollector.getComponents().find(c => c.id === dragId) as DroppableComponent;
+    comp.dropId = this.dropId;
+    this.components.push(comp);
   }
 
-  getComponentRef(id: string): string {
-    const comp = this.components.find(c => c.id === id);
-    return comp ? comp.componentRef : null;
+  getComponentRef(dropId: string): string {
+    const comp = this.components.find(c => c.dropId === dropId);
+    return comp ? comp.id : null;
   }
 
+  save(grids: GridsterItem[]) {
+
+    this.storedGrid = <any>grids.map(layout => ({ layout, componentRef: this.getComponentRef(layout.id) }));
+    this.storedGrid.save();
+
+  }
 }
