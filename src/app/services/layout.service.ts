@@ -25,10 +25,18 @@ export class LayoutService {
     }
   };
 
-  public layout: GridsterItem[] = [];
+  private _layout: GridsterItem[] = [];
   private components: DroppableComponent[] = [];
 
+
   dropId: string;
+
+  get layout(): GridsterItem[] {
+    if (this._layout === undefined || this._layout.length === 0) {
+      this.loadData();
+    }
+    return this._layout;
+  }
 
   constructor(
     private componentCollector: DraggableComponentCollector
@@ -37,7 +45,7 @@ export class LayoutService {
   }
 
   addItem(): void {
-    this.layout.push({
+    this._layout.push({
       cols: 5,
       id: UUID.UUID(),
       rows: 5,
@@ -47,8 +55,8 @@ export class LayoutService {
   }
 
   deleteItem(id: string): void {
-    const item = this.layout.find(d => d.id === id);
-    this.layout.splice(this.layout.indexOf(item), 1);
+    const item = this._layout.find(d => d.id === id);
+    this._layout.splice(this._layout.indexOf(item), 1);
     const comp = this.components.find(c => c.id === id);
     this.components.splice(this.components.indexOf(comp), 1);
   }
@@ -70,8 +78,6 @@ export class LayoutService {
   }
 
   save(grids: GridsterItem[]) {
-    this.storedGrid = undefined;
-    this.storedGrid.save();
     this.storedGrid = <any>grids.map(layout => ({ layout, componentRef: this.getComponentRef(layout.id) }));
     this.storedGrid.save();
 
@@ -79,9 +85,12 @@ export class LayoutService {
 
   loadData() {
     const grid: GridEntity[] = this.storedGrid;
-    for (const g of this.storedGrid) {
-      this.layout.push(g.layout);
-      this.dropItem(g.componentRef, g.layout.id);
+    if (grid) {
+      for (const g of this.storedGrid) {
+        console.log('loading', g);
+        this._layout.push(g.layout);
+        this.dropItem(g.componentRef, g.layout.id);
+      }
     }
   }
 }

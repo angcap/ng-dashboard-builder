@@ -1,0 +1,5 @@
+<gridster [options]="options">
+    <gridster-item *ngFor="let item of layout" [item]="item">
+        <ng-container appLayoutItem [componentRef]="layoutService.getComponentRef(item.id)"></ng-container>
+    </gridster-item>
+</gridster>

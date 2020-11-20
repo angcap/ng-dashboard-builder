@@ -7,4 +7,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ng-dashboard-builder';
+
+  viewMode = false;
+
+  setViewMode() {
+    this.viewMode = true;
+  }
 }

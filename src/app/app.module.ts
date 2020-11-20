@@ -8,6 +8,14 @@ import { Example1Component } from './components/example1/example1.component';
 import { Example2Component } from './components/example2/example2.component';
 import { LayoutItemDirective } from './directives/layout-item.directive';
 import { DraggableComponentCollector } from './services/draggable-component';
+import { ViewComponent } from './components/layout/view/view.component';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [{
+  path: '', component: LayoutComponent
+},
+{ path: 'view', component: ViewComponent }
+];
 
 @NgModule({
   declarations: [
@@ -15,11 +23,13 @@ import { DraggableComponentCollector } from './services/draggable-component';
     LayoutComponent,
     Example1Component,
     Example2Component,
-    LayoutItemDirective
+    LayoutItemDirective,
+    ViewComponent
   ],
   imports: [
     BrowserModule,
-    GridsterModule
+    GridsterModule,
+    RouterModule.forRoot(routes)
   ],
   providers: [
     { provide: 'DraggableComponent', multi: true, useClass: Example1Component },

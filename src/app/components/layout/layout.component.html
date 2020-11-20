@@ -1,7 +1,8 @@
+
 <div class="toolbar">
   <button (click)="layoutService.addItem()">Add Item</button>
   <button (click)="save()">Save</button>
-
+  <button (click)="viewmode()">Switch to view only mode</button>
   <div class="draggable" draggable="true" (dragend)="layoutService.dropItem(c.id)" *ngFor="let c of components">{{c.description}}</div>
   
 </div>

@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
+
 import { DraggableComponent, DraggableComponentCollector } from 'src/app/services/draggable-component';
 import { LayoutService } from '../../services/layout.service';
 
@@ -9,6 +11,8 @@ import { LayoutService } from '../../services/layout.service';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
+
+  @Output() viewModeEvent: EventEmitter<void> = new EventEmitter();
 
   get options(): GridsterConfig {
     return this.layoutService.options;
@@ -23,11 +27,11 @@ export class LayoutComponent implements OnInit {
   constructor(
     private layoutService: LayoutService,
     private componentCollector: DraggableComponentCollector,
-  ) {}
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.components = this.componentCollector.getComponents();
-    this.layoutService.loadData();
   }
 
   save() {
@@ -40,7 +44,7 @@ export class LayoutComponent implements OnInit {
     this.layoutService.save(this.layout);
   }
 
-  loadData() {
-    this.layoutService.loadData();
+  viewmode() {
+    this.router.navigate(['/view']);
   }
 }
