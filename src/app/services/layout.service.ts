@@ -57,10 +57,10 @@ export class LayoutService {
     this.dropId = dropId;
   }
 
-  dropItem(dragId: string): void {
+  dropItem(dragId: string, dropId?: string): void {
 
     const comp = this.componentCollector.getComponents().find(c => c.id === dragId) as DroppableComponent;
-    comp.dropId = this.dropId;
+    comp.dropId = dropId ? dropId : this.dropId;
     this.components.push(comp);
   }
 
@@ -70,9 +70,18 @@ export class LayoutService {
   }
 
   save(grids: GridsterItem[]) {
-
+    this.storedGrid = undefined;
+    this.storedGrid.save();
     this.storedGrid = <any>grids.map(layout => ({ layout, componentRef: this.getComponentRef(layout.id) }));
     this.storedGrid.save();
 
+  }
+
+  loadData() {
+    const grid: GridEntity[] = this.storedGrid;
+    for (const g of this.storedGrid) {
+      this.layout.push(g.layout);
+      this.dropItem(g.componentRef, g.layout.id);
+    }
   }
 }

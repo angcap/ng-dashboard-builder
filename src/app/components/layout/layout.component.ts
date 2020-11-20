@@ -10,8 +10,6 @@ import { LayoutService } from '../../services/layout.service';
 })
 export class LayoutComponent implements OnInit {
 
-
-
   get options(): GridsterConfig {
     return this.layoutService.options;
   }
@@ -25,12 +23,11 @@ export class LayoutComponent implements OnInit {
   constructor(
     private layoutService: LayoutService,
     private componentCollector: DraggableComponentCollector,
-  ) {
-
-  }
+  ) {}
 
   ngOnInit() {
     this.components = this.componentCollector.getComponents();
+    this.layoutService.loadData();
   }
 
   save() {
@@ -39,8 +36,11 @@ export class LayoutComponent implements OnInit {
       const componentRef = this.layoutService.getComponentRef(gridItem.id);
       console.log('LAYOUT', gridItem);
       console.log('COMPONENT', componentRef);
-      
     }
     this.layoutService.save(this.layout);
+  }
+
+  loadData() {
+    this.layoutService.loadData();
   }
 }
